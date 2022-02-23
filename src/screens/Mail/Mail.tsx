@@ -1,4 +1,5 @@
 import { useNavigation } from "@react-navigation/core";
+import LottieView from 'lottie-react-native';
 import React, { useEffect, useState } from "react";
 import {
   FlatList,
@@ -10,7 +11,7 @@ import {
   Text,
   TouchableOpacity,
   useWindowDimensions,
-  View,
+  View
 } from "react-native";
 import { SceneMap, TabBar, TabView } from "react-native-tab-view";
 import { useDispatch, useSelector } from "react-redux";
@@ -18,34 +19,24 @@ import {
   FilterIcon,
   GlobeIcon,
   PlusIcon,
-  QuestionsIcon,
+  QuestionsIcon
 } from "../../assets/icons/icons";
 import Filter from "../../components/Filter";
 import FilterModal from "../../components/FilterModal";
 import MailItem from "../../components/MailItem";
 import { colors } from "../../constants/color";
-import { mailStatus } from "../../constants/values";
+import { lotties } from '../../lotties';
 import { routes as Routes } from "../../navigation/routes";
 import { selectOrderState } from "../../redux/slices/order/order";
 import { selectUser } from "../../redux/slices/user/user";
 import { useMailHook } from "./hooks";
-import LottieView from 'lottie-react-native';
-import { lotties } from '../../lotties'
-
-const wait = (timeout) => {
-  return new Promise((resolve) => setTimeout(resolve, timeout));
-};
 
 // FirstRoute
 
 const FirstRoute = () => {
-  const [refreshing, setRefreshing] = React.useState(false);
-  const { commonMail, useRefresh } = useMailHook();
-
+  const { commonMail, useCommonMailRefresh, loading } = useMailHook();
   const onRefresh = React.useCallback(() => {
-    useRefresh();
-    setRefreshing(true);
-    wait(2000).then(() => setRefreshing(false));
+    useCommonMailRefresh();
   }, []);
 
   const [showFilter, setShowFilter] = useState(false);
@@ -59,60 +50,43 @@ const FirstRoute = () => {
   };
 
   return (
-    <ScrollView
+    <View
       style={{ marginBottom: 80 }}
-      refreshControl={
-        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-      }
     >
-      <Filter route={Routes.MAIL} />
       <FlatList
         contentContainerStyle={{
-          flex: 1,
+          flex: 1
         }}
+        refreshControl={
+          <RefreshControl refreshing={loading} onRefresh={onRefresh} />
+        }
+        ListHeaderComponent={<Filter route={Routes.MAIL} />}
         data={!!commonMail ? commonMail : []}
         renderItem={({ item }) => <MailItem item={item} />}
       />
-    </ScrollView>
+    </View>
   );
 };
 
 const SecondRoute = () => {
-
   const isCourier = useSelector(selectUser).is_deliveryman
-
-  // const [mailStatus, setMailStatus] = useState([
-  //   { id: 0, title: 'Yangi', value: 'new' },
-  //   { id: 1, title: 'Kurier topildi', value: 'accepted' },
-  //   { id: 2, title: "Yo'lda", value: 'active' },
-  //   { id: 4, title: 'Bekor qilingan', value: 'canceled' },
-  //   { id: 3, title: 'Bajarilgan', value: 'completed' },
-  // ]);
-
-  let first = { id: 0, title: 'Yangi', value: 'new' };
-  let second = { id: 0, title: 'new', value: 'new' };
-  const [mailStatus, setMailStatus] = useState([isCourier ? first : second])
-
-  // useEffect(() => {
-  //   setMailStatus([
-  //     { id: 0, title: 'Yangi', value: 'new' },
-  //     { id: 1, title: isCourier ? 'Kurier topildi' : "Yo'lda", value: 'accepted' },
-  //     { id: 2, title: "Yo'lda", value: 'active' },
-  //     { id: 3, title: 'Bajarilgan', value: 'completed' },
-  //     { id: 4, title: 'Bekor qilingan', value: 'canceled' },
-  //   ])
-  // }, [isCourier])
-
-
+  const [mailStatus, setMailStatus] = useState(!isCourier ? [
+    { id: 0, title: 'Yangi', value: 'new' },
+    { id: 1, title: 'Kurier topildi', value: 'accepted' },
+    { id: 2, title: "Yo'lda", value: 'active' },
+    { id: 4, title: 'Bekor qilingan', value: 'canceled' },
+    { id: 3, title: 'Bajarilgan', value: 'completed' },
+  ] : [
+    { id: 0, title: 'Yangi', value: 'new' },
+    { id: 1, title: "Yo'lda", value: 'active' },
+    { id: 2, title: "Yetkazilgan", value: 'active' },
+    { id: 4, title: 'Bekor qilingan', value: 'canceled' },
+  ]);
   let [activeIndex, setActiveIndex] = useState(0);
-  const { mail, filteredMail, useRefresh, filterMail } = useMailHook();
-  const [refreshing, setRefreshing] = useState(false);
+  const { filteredMail, useMailRefresh, filterMail, loading } = useMailHook();
   let navigation = useNavigation();
-
   const onRefresh = React.useCallback(() => {
-    useRefresh();
-    setRefreshing(true);
-    wait(2000).then(() => setRefreshing(false));
+    useMailRefresh();
   }, []);
 
   const onPressFilter = (id) => {
@@ -162,7 +136,7 @@ const SecondRoute = () => {
         <ScrollView
           contentContainerStyle={styles.scrollView}
           refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+            <RefreshControl refreshing={loading} onRefresh={onRefresh} />
           }
         >
           {!!filteredMail &&
@@ -178,30 +152,27 @@ const SecondRoute = () => {
 // ThirdRoute
 
 const ThirdRoute = () => {
-  const [refreshing, setRefreshing] = useState(false);
-  const { packageListMail, useRefresh } = useMailHook();
+  const { packageListMail, usePackageListMailRefresh, loading } = useMailHook();
 
   const onRefresh = React.useCallback(() => {
-    useRefresh();
-    setRefreshing(true);
-    wait(2000).then(() => setRefreshing(false));
+    usePackageListMailRefresh();
   }, []);
 
   return (
-    <ScrollView
+    <View
       style={{ marginBottom: 80 }}
-      refreshControl={
-        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-      }
     >
       <FlatList
         contentContainerStyle={{
-          flex: 1,
+          flex: 1
         }}
         data={!!packageListMail ? packageListMail : []}
         renderItem={({ item }) => <MailItem item={item} />}
+        refreshControl={
+          <RefreshControl refreshing={loading} onRefresh={onRefresh} />
+        }
       />
-    </ScrollView>
+    </View>
   );
 };
 
@@ -209,30 +180,27 @@ const ThirdRoute = () => {
 
 const FourthRoute = () => {
   let navigation = useNavigation();
-  const [refreshing, setRefreshing] = useState(false);
-  const { receiveMail, useRefresh } = useMailHook();
+  const { receiveMail, useReceiveMailRefresh, loading } = useMailHook();
 
   const onRefresh = React.useCallback(() => {
-    useRefresh();
-    setRefreshing(true);
-    wait(2000).then(() => setRefreshing(false));
+    useReceiveMailRefresh();
   }, []);
 
   return (
-    <ScrollView
+    <View
       style={{ marginBottom: 80 }}
-      refreshControl={
-        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-      }
     >
       <FlatList
         contentContainerStyle={{
-          flex: 1,
+          flex: 1
         }}
+        refreshControl={
+          <RefreshControl refreshing={loading} onRefresh={onRefresh} />
+        }
         data={!!receiveMail ? receiveMail : []}
         renderItem={({ item }) => <MailItem item={item} />}
       />
-    </ScrollView>
+    </View>
   );
 };
 

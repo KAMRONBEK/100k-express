@@ -46,14 +46,14 @@ const Transport = () => {
     { key: "third", title: !isCourier ? "Mening buyurtmalarim" : "Mening e'lonlarim" },
   ]);
 
-  // useEffect(() => {
-  //   setRoutes([
-  //     { key: "first", title: "Barchasi" },
-  //     { key: "second", title: "Ko'rilganlar" },
-  //     { key: "third", title: !isCourier ? "Mening buyurtmalarim" : "Mening e'lonlarim" },
-  //   ])
+  useEffect(() => {
+    setRoutes([
+      { key: "first", title: "Barchasi" },
+      { key: "second", title: "Ko'rilganlar" },
+      { key: "third", title: !isCourier ? "Mening buyurtmalarim" : "Mening e'lonlarim" },
+    ])
 
-  // }, [isCourier])
+  }, [isCourier])
 
   const [isModalVisible, setModalVisible] = useState(false);
 
@@ -93,7 +93,7 @@ const Transport = () => {
     });
   };
   return (
-    <View horizontal={false} style={{ flexDirection: "column", flex: 1 }}>
+    <View style={{ flexDirection: "column", flex: 1 }}>
       <View style={styles.top}>
         <TouchableOpacity
           onPress={() => navigation.navigate(Routes.QUESTIONTRANSPORT)}

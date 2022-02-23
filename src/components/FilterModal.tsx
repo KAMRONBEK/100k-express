@@ -24,10 +24,6 @@ const FilterModal = ({ value = false, setValue, toggleValue }) => {
   let navigation = useNavigation();
   let state = useSelector(selectFilterState);
 
-  useEffect(() => {
-    console.log(value);
-  }, [value]);
-
   return (
     <View>
       <Modal

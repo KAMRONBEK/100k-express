@@ -1,29 +1,29 @@
 import { useNavigation } from "@react-navigation/native";
 import React, { useState } from "react";
 import {
-  Alert,
   Dimensions,
-  Image,
-  Pressable,
-  StyleSheet,
+  Image, Linking, StyleSheet,
   Text,
   TouchableOpacity,
   TouchableWithoutFeedback,
-  View,
+  View
 } from "react-native";
+import { TextInputMask } from "react-native-masked-text";
 import Modal from "react-native-modal";
 import { useSelector } from "react-redux";
 import { images } from "../assets";
 import {
+  CallIcon,
   CheckedIcon,
   LeftArrowIcon,
   PensolIcon,
   PlusIcon,
-  XIcon,
+  XIcon
 } from "../assets/icons/icons";
-import { routes } from "../navigation/routes";
 import { colors } from "../constants/color";
-import user, { selectUser } from "../redux/slices/user/user";
+import { routes } from "../navigation/routes";
+import { selectUser } from "../redux/slices/user/user";
+import { useTaxiHook } from "../screens/Taxi/hooks";
 
 interface IPassangerProp {
   item: any;
@@ -31,8 +31,15 @@ interface IPassangerProp {
 }
 
 const PassangerItem = ({ item, editable }: IPassangerProp) => {
+
+  const onCallPress = async () => {
+    await Linking.openURL("tel:+998 99 803 22 26")
+  }
+
   let user = useSelector(selectUser);
   let navigation = useNavigation();
+  const isCourier = useSelector(selectUser).is_deliveryman
+  let { onConnect } = useTaxiHook()
 
   const [deleteModalVisibility, setDeleteModalVisibility] = useState(false);
   const toggleModal = () => {
@@ -46,12 +53,18 @@ const PassangerItem = ({ item, editable }: IPassangerProp) => {
 
   const [isModalVisibleAccept, setModalVisibleAccept] = useState(false);
   const toggleAcceptanceModal = () => {
-    if (user.is_deliveryman == false) {
-      setModalVisibleAccept(!isModalVisibleAccept);
+    if (isCourier) {
+      setConnectionModal(!connectionModal)
+    } else {
+      setModalVisibleAccept(!toggleConnectionModal);
     }
   };
 
-  const isCourier = useSelector(selectUser).is_deliveryman
+  const [connectionModal, setConnectionModal] = useState(false);
+  const toggleConnectionModal = () => {
+    onConnect(item.id);
+    setConnectionModal(!connectionModal);
+  }
 
   return (
     <>
@@ -70,9 +83,16 @@ const PassangerItem = ({ item, editable }: IPassangerProp) => {
           }}
         >
           <View style={{ flexDirection: "row" }}>
-            <Text style={{ fontWeight: "bold", fontSize: 18 }}>
-              {item.cost}
-            </Text>
+            <TextInputMask type={"money"}
+              options={{
+                precision: 0,
+                separator: ',',
+                delimiter: ' ',
+                unit: '',
+                suffixUnit: ''
+              }}
+              value={item.cost.toString()} style={styles.costStyle} editable={false}
+            />
             <Text
               style={{
                 marginLeft: 5,
@@ -255,13 +275,11 @@ const PassangerItem = ({ item, editable }: IPassangerProp) => {
                         borderRadius: 10,
                       }}
                     >
-                      <Text style={{ fontSize: 16 }}>Buyurtmangizni</Text>
-                      <Text style={{ fontSize: 16 }}>o'chirmoqchimisiz?</Text>
+                      <Text style={{ fontSize: 16 }}>Buyurtmani o'chirsangiz qaytadan sotib olishingizga to'g'ri kelishi mumkin!</Text>
                       <View
                         style={{
                           flexDirection: "row",
                           paddingVertical: 10,
-                          marginLeft: 100,
                           marginHorizontal: 10,
                           marginTop: 10,
                           justifyContent: "space-evenly",
@@ -297,22 +315,30 @@ const PassangerItem = ({ item, editable }: IPassangerProp) => {
                     <XIcon size={15} />
                   </TouchableOpacity>
                 </View>
-                <TouchableOpacity
-                  style={styles.pensolbutton}
-                  onPress={() =>
-                    navigation.navigate(routes.EDIT_PASSENGER, {
-                      id: item.id,
-                    })
-                  }
-                >
-                  <PensolIcon size={15} />
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={styles.checkedbutton}
-                  onPress={toggleModalTwo}
-                >
-                  <CheckedIcon size={15} />
-                </TouchableOpacity>
+                {!isCourier ? (
+                  <View style={{ flexDirection: 'row' }}>
+                    <TouchableOpacity
+                      style={styles.pensolbutton}
+                      onPress={() =>
+                        navigation.navigate(routes.EDIT_PASSENGER, {
+                          id: item.id,
+                        })
+                      }
+                    >
+                      <PensolIcon size={15} />
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      style={styles.checkedbutton}
+                      onPress={toggleModalTwo}
+                    >
+                      <CheckedIcon size={15} />
+                    </TouchableOpacity>
+                  </View>
+                ) : (
+                  <TouchableOpacity style={styles.callBtn} onPress={onCallPress}>
+                    <CallIcon size={15} />
+                  </TouchableOpacity>
+                )}
                 <View>
                   <Modal
                     isVisible={checkedModalVisibility}
@@ -416,53 +442,103 @@ const PassangerItem = ({ item, editable }: IPassangerProp) => {
             ) : (
               user.id !== item.creator_id && (
                 <>
-                  <Modal
-                    isVisible={isModalVisibleAccept}
-                    testID={"modal"}
-                    swipeDirection={["right", "down", "left"]}
-                    swipeThreshold={Dimensions.get("window").width / 2}
-                    onSwipeComplete={() => {
-                      setModalVisibleAccept(false);
-                    }}
-                    style={{
-                      justifyContent: "center",
-                      margin: 0,
-                    }}
-                  >
-                    <View
+                  {!isCourier ? (
+                    <Modal
+                      isVisible={isModalVisibleAccept}
+                      testID={"modal"}
+                      swipeDirection={["right", "down", "left"]}
+                      swipeThreshold={Dimensions.get("window").width / 2}
+                      onSwipeComplete={() => {
+                        setModalVisibleAccept(false);
+                      }}
                       style={{
-                        flex: 1,
-                        backgroundColor: colors.white,
-                        paddingHorizontal: 25,
-                        alignItems: "center",
-                        justifyContent: "space-between",
+                        justifyContent: "center",
+                        margin: 0,
                       }}
                     >
-                      <View style={styles.expressImageView}>
-                        <Image source={images.bee} style={styles.beeImage} />
-                        <Text style={styles.expressText}>100k Express</Text>
-                        <Text style={styles.paragraph}>
-                          Haydovchi sifatida siz ham yuk, ham yo'lovchi tashish
-                          transport vositalarni qo'shishingiz mumkin. Ushbu
-                          xizmatdan foydalanish uchun Kuryer bo'lib ro'yxatdan
-                          o'ting
-                        </Text>
-                      </View>
-                      <TouchableOpacity
-                        style={styles.getCourier}
-                        activeOpacity={0.8}
-                        onPress={() => {
-                          setModalVisibleAccept(false);
-                          navigation.navigate(routes.COURIER);
+                      <View
+                        style={{
+                          flex: 1,
+                          backgroundColor: colors.white,
+                          paddingHorizontal: 25,
+                          alignItems: "center",
+                          justifyContent: "space-between",
                         }}
                       >
-                        <Text style={styles.getCourierText}>
-                          Kuryer bo'lish
-                        </Text>
-                      </TouchableOpacity>
+                        <View style={styles.expressImageView}>
+                          <Image source={images.bee} style={styles.beeImage} />
+                          <Text style={styles.expressText}>100k Express</Text>
+                          <Text style={styles.paragraph}>
+                            Haydovchi sifatida siz ham yuk, ham yo'lovchi tashish
+                            transport vositalarni qo'shishingiz mumkin. Ushbu
+                            xizmatdan foydalanish uchun Kuryer bo'lib ro'yxatdan
+                            o'ting
+                          </Text>
+                        </View>
+                        <TouchableOpacity
+                          style={styles.getCourier}
+                          activeOpacity={0.8}
+                          onPress={() => {
+                            setModalVisibleAccept(false);
+                            navigation.navigate(routes.COURIER);
+                          }}
+                        >
+                          <Text style={styles.getCourierText}>
+                            Kuryer bo'lish
+                          </Text>
+                        </TouchableOpacity>
+                      </View>
+                    </Modal>
+                  ) : (
+                    <View>
+                      <Modal
+                        isVisible={connectionModal}
+                        testID={'modal'}
+                        onBackdropPress={() => setConnectionModal(false)}
+                        style={{
+                          justifyContent: 'center',
+                          margin: 0,
+                        }}>
+                        <View
+                          style={{
+                            backgroundColor: '#fff',
+                            marginHorizontal: 30,
+                            paddingVertical: 20,
+                            paddingHorizontal: 20,
+                            borderRadius: 10,
+                          }}>
+                          <Text style={{ fontSize: 16, textAlign: 'center' }}>E'lon ko'rilganlar bo'limiga o'tqazildi</Text>
+                          <View
+                            style={{
+                              flexDirection: 'row',
+                              paddingVertical: 10,
+                              marginHorizontal: 10,
+                              marginTop: 10,
+                              justifyContent: 'space-evenly',
+                            }}>
+                            <TouchableWithoutFeedback onPress={toggleConnectionModal}>
+                              <Text
+                                style={{
+                                  color: '#8a8a8a',
+                                  paddingRight: 20,
+                                }}>
+                                BEKOR QILISH
+                              </Text>
+                            </TouchableWithoutFeedback>
+                            <TouchableWithoutFeedback onPress={toggleConnectionModal}>
+                              <Text
+                                style={{
+                                  color: '#ffc100',
+                                  fontSize: 18
+                                }}>
+                                OK
+                              </Text>
+                            </TouchableWithoutFeedback>
+                          </View>
+                        </View>
+                      </Modal>
                     </View>
-                  </Modal>
-
+                  )}
                   <TouchableOpacity
                     style={styles.btn1}
                     onPress={toggleAcceptanceModal}
@@ -661,4 +737,18 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     borderWidth: 1,
   },
+  costStyle: {
+    fontSize: 18,
+    fontWeight: 'bold'
+  },
+  callBtn: {
+    marginLeft: 6,
+    borderWidth: 1.5,
+    borderRadius: 25,
+    paddingHorizontal: 11,
+    paddingVertical: 11,
+    alignItems: "center",
+    justifyContent: "center",
+    borderColor: colors.darkGray,
+  }
 });

@@ -25,15 +25,11 @@ import { routes } from "../../navigation/routes";
 import { selectOrderState, setOrderData } from "../../redux/slices/order/order";
 import { useTransportHook } from "./hooks";
 
-const AddTransport = ({ navigation }) => {
-  ``
+const AddTransport = ({ navigation, e }) => {
   const [carImageId, setCarImageId] = useState(null);
-
   const [costTypes, setCostTypes] = useState(transportCostType);
-
   const state = useSelector(selectOrderState);
   const dispatch = useDispatch();
-
   const { createTransport, loading } = useTransportHook();
   const onSubmitFrom = async () => {
     createTransport({
@@ -98,11 +94,11 @@ const AddTransport = ({ navigation }) => {
         <Text style={styles.addTransportText}>Transport qo’shish</Text>
       </View>
       <ScrollView>
-        <TransportTypeSelector
+        {/* <TransportTypeSelector
           value={state.transportType}
           setValue={(e) => dispatch(setOrderData({ transportType: e }))}
-        // title={e.title}
-        />
+          title={e.title}
+        /> */}
         <View style={{ paddingHorizontal: 16, marginTop: 20, }}>
           <Text style={{ fontSize: 14, color: colors.darkGray }}>
             Texnika to'g'risida ma'lumot *
@@ -215,12 +211,20 @@ const AddTransport = ({ navigation }) => {
           >
             <View style={[styles.inputView]}>
               <TextInputMask
-                type={"custom"}
+                type={"money"}
+                options={{
+                  precision: 0,
+                  separator: ',',
+                  delimiter: ' ',
+                  unit: '',
+                  suffixUnit: ''
+                }}
                 style={{ fontSize: 16 }}
                 value={state.cost?.toString()}
                 onChangeText={(e) => dispatch(setOrderData({ cost: e }))}
                 placeholder="Narxni kiriting..."
                 keyboardType="numeric"
+
               />
             </View>
             <View

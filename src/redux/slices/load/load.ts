@@ -3,7 +3,7 @@ import {createSlice} from '@reduxjs/toolkit';
 const initialState = {
   load: [],
   commonLoad: [],
-  buyContact: [],
+  seenLoad: [],
 };
 
 const loadSlice = createSlice({
@@ -20,8 +20,9 @@ const loadSlice = createSlice({
       state = {...state, commonLoad: payload};
       return state;
     },
-    setBuyContact: (state, {payload}) => {
-      state = {...state, buyContact: payload};
+
+    setSeenLoad: (state, {payload}) => {
+      state = {...state, seenLoad: payload};
       return state;
     },
 
@@ -34,8 +35,7 @@ const loadSlice = createSlice({
 
 export const selectLoad = store => store.load.load;
 export const selectCommonLoad = store => store.load.commonLoad;
-export const selectBuyContact = store => store.load.buyContact;
+export const selectSeenLoad = store => store.load.seenLoad;
 
-export const {setLoad, update, setCommonLoad, setBuyContact} =
-  loadSlice.actions;
+export const {setLoad, update, setCommonLoad, setSeenLoad} = loadSlice.actions;
 export default loadSlice.reducer;

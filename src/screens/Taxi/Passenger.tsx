@@ -1,9 +1,6 @@
 import { useNavigation } from "@react-navigation/core";
 import React, { useEffect, useState } from "react";
 import {
-  FlatList,
-  RefreshControl,
-  ScrollView,
   StatusBar,
   StyleSheet,
   Text,
@@ -19,80 +16,14 @@ import {
   PlusIcon,
   QuestionsIcon
 } from "../../assets/icons/icons";
-import Filter from "../../components/Filter";
 import FilterModal from "../../components/FilterModal";
-import PassangerItem from "../../components/PassangerItem";
 import { colors } from "../../constants/color";
 import { routes as Routes } from "../../navigation/routes";
 import { selectOrderState } from "../../redux/slices/order/order";
 import { selectUser } from "../../redux/slices/user/user";
 import { useTaxiHook } from "./hooks";
+import { CommonTaxi, SeenTaxi, MyTaxiOrder } from "./tabs";
 
-const FirstRoute = () => {
-  const { commonTaxi, refreshTaxi } = useTaxiHook();
-  const [refreshing, setRefreshing] = useState(false);
-  let navigation = useNavigation();
-
-  const onRefresh = React.useCallback(() => {
-    refreshTaxi();
-    setRefreshing(true);
-    wait(2000).then(() => setRefreshing(false));
-  }, []);
-
-  return (
-    <ScrollView
-      contentContainerStyle={styles.scrollView}
-      refreshControl={
-        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-      }
-    >
-      <Filter route={Routes.PASSENGER} />
-      <FlatList
-        contentContainerStyle={{
-          flex: 1,
-        }}
-        data={!!commonTaxi ? commonTaxi : []}
-        renderItem={({ item }) => <PassangerItem item={item} />}
-      />
-    </ScrollView>
-  );
-};
-const SecondRoute = () => {
-  const { taxi, refreshTaxi } = useTaxiHook();
-  const [refreshing, setRefreshing] = useState(false);
-  let navigation = useNavigation();
-
-  const onRefresh = React.useCallback(() => {
-    refreshTaxi();
-    setRefreshing(true);
-    wait(2000).then(() => setRefreshing(false));
-  }, []);
-
-  return (
-    <View style={styles.container}>
-      <ScrollView
-        contentContainerStyle={styles.scrollView}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-        }
-      >
-        {!!taxi &&
-          taxi.map((item) => (
-            <PassangerItem item={item} key={`${item.id}`} editable={true} />
-          ))}
-      </ScrollView>
-    </View>
-  );
-};
-
-const renderScene = SceneMap({
-  first: FirstRoute,
-  second: SecondRoute,
-});
-
-const wait = (timeout: number) => {
-  return new Promise((resolve) => setTimeout(resolve, timeout));
-};
 
 export interface PassengerViewProps { }
 
@@ -100,22 +31,21 @@ let titleIconMapper = {
   first: <GlobeIcon />,
 };
 
-const Passenger = ({ }: PassengerViewProps) => {
+const Passenger = () => {
+  const isCourier = useSelector(selectUser).is_deliveryman
+
+  const renderScene = SceneMap({
+    first: CommonTaxi,
+    second: isCourier ? SeenTaxi : MyTaxiOrder,
+  });
+
   const layout = useWindowDimensions();
   let navigation = useNavigation();
   const [index, setIndex] = useState(0);
-  const isCourier = useSelector(selectUser).is_deliveryman
-  const [routes, setRoutes] = useState([
+  const [routes] = useState([
     { key: "first", title: "Barchasi" },
     { key: "second", title: !isCourier ? "Mening buyurtmalarim" : "Ko'rilganlar" },
   ]);
-
-  useEffect(() => {
-    setRoutes([
-      { key: "first", title: "Barchasi" },
-      { key: "second", title: !isCourier ? "Mening buyurtmalarim" : "Ko'rilganlar" }
-    ])
-  }, [isCourier])
 
   const [isModalVisible, setModalVisible] = useState(false);
   const toggleModal = () => {
@@ -154,6 +84,8 @@ const Passenger = ({ }: PassengerViewProps) => {
     });
   };
 
+  const _renderLazyPlaceholder = ({ route }) => <View style={{ flex: 1, backgroundColor: 'red' }}><Text>asdasdasd</Text></View>;
+
   return (
     <View style={{ flex: 1 }}>
       <StatusBar style={styles.statusbar} />
@@ -178,6 +110,8 @@ const Passenger = ({ }: PassengerViewProps) => {
         </View>
       </View>
       <TabView
+        lazy
+        renderLazyPlaceholder={_renderLazyPlaceholder}
         navigationState={{ index, routes }}
         renderScene={renderScene}
         onIndexChange={setIndex}

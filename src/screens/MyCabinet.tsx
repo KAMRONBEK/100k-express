@@ -27,12 +27,6 @@ const wait = (timeout: number) => {
 
 const MyCabinet = ({ navigation }) => {
   const { user, onLogout, refreshMyCabinet, refreshing } = useProfileHook();
-  // const [refreshing, setRefreshing] = useState(false);
-  // const onRefresh = React.useCallback(() => {
-  //   refreshMyCabinet();
-  //   setRefreshing(true);
-  //   wait(2000).then(() => setRefreshing(false));
-  // }, []);
 
   const [pickerResponse, setPickerResponse] = useState<ImagePicker.Asset>({});
   const [visible, setVisible] = useState(false);
@@ -72,7 +66,7 @@ const MyCabinet = ({ navigation }) => {
           </TouchableOpacity>
           <Text style={styles.mycabinaet}>Mening kabinetim</Text>
           <TouchableOpacity
-            onPress={() => navigation.navigate(routes.NOTIFICATIONS)}
+            onPress={() => navigation.navigate(routes.NOTIFICAwTIONS)}
           >
             <BellIcon size={22} />
           </TouchableOpacity>

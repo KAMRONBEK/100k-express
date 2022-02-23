@@ -1,8 +1,5 @@
-import { useNavigation } from "@react-navigation/native";
 import React, { useState } from "react";
 import {
-  FlatList, RefreshControl,
-  ScrollView,
   StatusBar,
   StyleSheet,
   Text,
@@ -17,105 +14,19 @@ import {
   GlobeIcon, PlusIcon,
   QuestionsIcon
 } from "../../assets/icons/icons";
-import Filter from "../../components/Filter";
 import FilterModal from "../../components/FilterModal";
-import LoadItem from "../../components/LoadItem";
 import { colors } from "../../constants/color";
 import { routes as Routes } from "../../navigation/routes";
 import { selectOrderState } from "../../redux/slices/order/order";
 import { useLoadHook } from "./hooks";
-
-const FirstRoute = () => {
-  const { commonLoad, refreshLoad } = useLoadHook();
-  const [refreshing, setRefreshing] = useState(false);
-  let navigation = useNavigation();
-
-  const onRefresh = React.useCallback(() => {
-    refreshLoad();
-    setRefreshing(true);
-    wait(2000).then(() => setRefreshing(false));
-  }, []);
-
-  return (
-    <ScrollView
-      contentContainerStyle={styles.scrollView}
-      refreshControl={
-        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-      }
-    >
-      <Filter route={Routes.LOAD} />
-      <FlatList
-        contentContainerStyle={{ flex: 1 }}
-        data={!!commonLoad ? commonLoad : []}
-        renderItem={({ item }) => <LoadItem item={item} />}
-      />
-    </ScrollView>
-  );
-};
-const SecondRoute = () => {
-  const { load, buyContact, refreshLoad } = useLoadHook();
-  const [refreshing, setRefreshing] = useState(false);
-  let navigation = useNavigation();
-
-  const onRefresh = React.useCallback(() => {
-    refreshLoad();
-    setRefreshing(true);
-    wait(2000).then(() => setRefreshing(false));
-  }, []);
-
-  return (
-    <View style={styles.container}>
-      <ScrollView
-        contentContainerStyle={styles.scrollView}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-        }
-      >
-        {!!buyContact && buyContact.map((item) => (
-          <LoadItem item={item} key={`${item.id}`} editable={true} />
-        ))}
-      </ScrollView>
-    </View>
-  );
-};
-
-const ThirdRoute = () => {
-  const { load, refreshLoad } = useLoadHook();
-  const [refreshing, setRefreshing] = useState(false);
-  let navigation = useNavigation();
-
-  const onRefresh = React.useCallback(() => {
-    refreshLoad();
-    setRefreshing(true);
-    wait(2000).then(() => setRefreshing(false));
-  }, []);
-
-  return (
-    <View style={styles.container}>
-      <ScrollView
-        contentContainerStyle={styles.scrollView}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-        }
-      >
-        {!!load &&
-          load.map((item) => (
-            <LoadItem item={item} key={`${item.id}`} editable={true} />
-          ))}
-      </ScrollView>
-    </View>
-  );
-};
+import { CommonLoad, MyOrderLoad, SeenLoad } from "./tabs";
 
 const renderScene = SceneMap({
-  first: FirstRoute,
-  second: SecondRoute,
-  third: ThirdRoute,
+  first: CommonLoad,
+  second: SeenLoad,
+  third: MyOrderLoad,
 });
 
-const wait = (timeout: number) => {
-  return new Promise((resolve) => setTimeout(resolve, timeout));
-};
 
 export interface PassengerViewProps { }
 
@@ -171,7 +82,7 @@ const Load = ({ navigation }: PassengerViewProps) => {
   };
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={{ flex: 1, marginBottom: 65 }}>
       <StatusBar style={styles.statusbar} />
       <View style={styles.top}>
         <TouchableOpacity
@@ -325,7 +236,7 @@ const styles = StyleSheet.create({
     borderColor: colors.darkOrange,
     position: "absolute",
     right: 26,
-    bottom: 97,
+    bottom: 35,
     alignItems: "center",
     justifyContent: "center",
     width: 55,

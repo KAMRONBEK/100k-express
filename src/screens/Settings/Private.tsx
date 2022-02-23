@@ -1,4 +1,3 @@
-import { useNavigation } from "@react-navigation/native";
 import React from "react";
 import {
   ActivityIndicator,
@@ -7,15 +6,15 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  View,
+  View
 } from "react-native";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { LeftArrowIcon, LocationIcon } from "../../assets/icons/icons";
+import GenderSelector from "../../components/GenderSelector";
 import { locationType } from "../../constants/values";
 import { routes } from "../../navigation/routes";
-import { useSettingsHook } from "./hook";
 import { updateProfile } from "../../redux/slices/user/user";
-import GenderSelector from "../../components/GenderSelector";
+import { useSettingsHook } from "./hook";
 
 const Private = ({ navigation }) => {
   const dispatch = useDispatch();

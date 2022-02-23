@@ -1,7 +1,6 @@
 import { useNavigation } from "@react-navigation/core";
 import React, { useState } from "react";
 import {
-  Dimensions,
   Image,
   StyleSheet,
   Text,
@@ -9,6 +8,7 @@ import {
   TouchableWithoutFeedback,
   View
 } from "react-native";
+import { TextInputMask } from "react-native-masked-text";
 import Modal from "react-native-modal";
 import { useDispatch, useSelector } from "react-redux";
 import { images } from "../assets";
@@ -46,9 +46,6 @@ const TransportItem = ({ item, editable }: ITransportProp) => {
   };
 
   const [connectionModal, setConnectionModal] = useState(false);
-
-
-
   const toggleConnectionModal = () => {
     onConnect(item.id);
     setConnectionModal(!connectionModal);
@@ -70,20 +67,21 @@ const TransportItem = ({ item, editable }: ITransportProp) => {
           }}
         >
           <View style={{ flexDirection: "row", marginLeft: 10 }}>
-            <Text
-              style={{
-                fontSize: 18,
-                color: colors.black,
-                fontWeight: "bold",
+            <TextInputMask type={"money"}
+              options={{
+                precision: 0,
+                separator: ',',
+                delimiter: ' ',
+                unit: '',
+                suffixUnit: ''
               }}
-            >
-              {item.cost}
-            </Text>
+              value={item.cost.toString()} style={styles.costStyle} editable={false}
+            />
             <Text
               style={{
                 fontSize: 15,
                 fontWeight: "bold",
-                paddingLeft: 10,
+                marginLeft: 5,
                 color: colors.darkGray,
               }}
             >
@@ -650,4 +648,9 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     borderWidth: 1,
   },
+  costStyle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginLeft: 5
+  }
 });

@@ -5,6 +5,8 @@ import {
     update,
     selectCommonTaxi,
     setCommonTaxi,
+    selectSeenTaxi,
+    setSeenTaxi,
 } from "../../redux/slices/taxi/taxi";
 import React, { useEffect, useState } from "react";
 import { requests } from "../../api/requests";
@@ -17,32 +19,80 @@ import { selectUser } from "../../redux/slices/user/user";
 export let useTaxiHook = () => {
     let taxi = useSelector(selectTaxi);
     let commonTaxi = useSelector(selectCommonTaxi);
+    let seenTaxi = useSelector(selectSeenTaxi)
     let navigation = useNavigation();
     const [loading, setLoading] = useState(false);
     let dispatch = useDispatch();
     let user = useSelector(selectUser);
-    let effect = async () => {
+
+    const loadTaxi = async () => {
         try {
-            let res = await requests.taxi.getTaxi();
+            let res = await requests.taxi.user.getTaxi();
             dispatch(setTaxi(res.data.data));
-            let resCommon = await requests.taxi.getCommonTaxi();
-            dispatch(setCommonTaxi(resCommon.data.data));
-        } catch (err: any) {
-            console.log(err.response.data, "error in mail");
         }
+        catch (err: any) {
+            showMessage({ message: JSON.stringify(err.response.data) + "\n error in taxi", type: 'danger' })
+        }
+        finally {
+            setLoading(false)
+        }
+    }
+
+    const loadCommonTaxi = async () => {
+        try {
+            let res = await requests.taxi.common.getCommonTaxi();
+            dispatch(setCommonTaxi(res.data.data));
+        }
+        catch (err: any) {
+            showMessage({ message: JSON.stringify(err.response.data) + "\n error in common taxi", type: 'danger' })
+        }
+        finally {
+            setLoading(false)
+        }
+    }
+
+    const loadSeenTaxi = async () => {
+        try {
+            let res = await requests.taxi.driver.getSeenTaxi();
+            dispatch(setSeenTaxi(res.data.data));
+        }
+        catch (err: any) {
+            showMessage({ message: JSON.stringify(err.response.data) + "\n error in seen taxi", type: 'danger' })
+        }
+        finally {
+            setLoading(false)
+        }
+    }
+
+    let effect = () => {
+        setLoading(true)
+        loadTaxi()
+        loadCommonTaxi()
+        loadSeenTaxi()
     };
+
+    let useTaxiRefresh = () => {
+        loadTaxi()
+    };
+    let useCommonTaxiRefresh = () => {
+        loadCommonTaxi()
+    };
+    let useSeenTaxiRefresh = () => {
+        loadSeenTaxi()
+    };
+
+    const onConnect = async (id) => {
+        let res = await requests.taxi.driver.buyContact(id);
+    }
+
     useEffect(() => {
         effect();
     }, []);
 
-    const refreshTaxi = () => {
-        effect();
-    };
-
     const createPassanger = async (credentials) => {
         setLoading(true);
         try {
-            let res = await requests.taxi.createPassanger(credentials);
+            let res = await requests.taxi.user.createPassanger(credentials);
             showMessage({
                 message: "Zakaz qabul qilindi",
                 type: "success",
@@ -66,7 +116,7 @@ export let useTaxiHook = () => {
     const editPassanger = async (credentials, id) => {
         setLoading(true);
         try {
-            let res = await requests.taxi.createPassanger(credentials, id);
+            let res = await requests.taxi.user.editPassanger(credentials, id);
             showMessage({
                 message: "Zakaz qabul qilindi",
                 type: "success",
@@ -90,9 +140,13 @@ export let useTaxiHook = () => {
     return {
         taxi,
         commonTaxi,
-        refreshTaxi,
         createPassanger,
         loading,
         editPassanger,
+        onConnect,
+        useSeenTaxiRefresh,
+        useCommonTaxiRefresh,
+        useTaxiRefresh,
+        seenTaxi
     };
 };

@@ -1,12 +1,13 @@
 // import { configureStore } from "@reduxjs/toolkit";
-import reducers from "./reducers";
-import { persistStore, persistReducer } from "redux-persist";
-import { compose, createStore, Store } from "redux";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import Reactotron from "./ReactotronConfig";
+import reducers from './reducers';
+import {persistStore, persistReducer} from 'redux-persist';
+import {compose, createStore, Store} from 'redux';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import Reactotron from './ReactotronConfig';
 const persistConfig = {
-  key: "root",
+  key: 'root',
   storage: AsyncStorage,
+  whitelist: ['order', 'user'],
 };
 
 const persistedReducer = persistReducer(persistConfig, reducers);

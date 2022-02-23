@@ -22,7 +22,6 @@ enum transportOrderType {
 }
 
 export let useTransportHook = () => {
-
   let transport = useSelector(selectTransport);
   let commonTransport = useSelector(selectCommonTransport);
   let seenTransport = useSelector(selectSeenTransport)
@@ -44,7 +43,6 @@ export let useTransportHook = () => {
       setLoading(false)
     }
   }
-
 
   const loadCommonTransport = async () => {
     setLoading(true)
@@ -97,7 +95,7 @@ export let useTransportHook = () => {
 
   useEffect(() => {
     effect();
-  });
+  }, []);
 
   const createTransport = async (credentials) => {
     setLoading(true);
@@ -149,7 +147,9 @@ export let useTransportHook = () => {
   return {
     transport,
     commonTransport,
-    useTransportRefresh, useCommonTransportRefresh, useSeenTransportRefresh,
+    useTransportRefresh,
+    useCommonTransportRefresh,
+    useSeenTransportRefresh,
     createTransport,
     loading,
     editTransport,

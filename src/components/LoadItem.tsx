@@ -1,8 +1,14 @@
 import { useNavigation } from '@react-navigation/native';
 import React, { useState } from 'react';
 import {
-  Image, StyleSheet, Text, TouchableOpacity, TouchableWithoutFeedback, View
+  Image,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  TouchableWithoutFeedback,
+  View
 } from 'react-native';
+import { TextInputMask } from 'react-native-masked-text';
 import Modal from 'react-native-modal';
 import { useSelector } from 'react-redux';
 import { images } from '../assets';
@@ -15,6 +21,7 @@ import {
 import { colors } from '../constants/color';
 import { routes } from '../navigation/routes';
 import { selectUser } from '../redux/slices/user/user';
+import { useLoadHook } from '../screens/Load/hooks';
 
 interface ILoadProp {
   item: any;
@@ -24,6 +31,7 @@ interface ILoadProp {
 const LoadItem = ({ item, editable }: ILoadProp) => {
   let user = useSelector(selectUser);
   let navigation = useNavigation();
+  let { onConnect } = useLoadHook()
 
   const [isModalVisible, setModalVisible] = useState(false);
   const toggleModal = () => {
@@ -37,24 +45,9 @@ const LoadItem = ({ item, editable }: ILoadProp) => {
 
   const [connectionModal, setConnectionModal] = useState(false);
   const toggleConnectionModal = () => {
+    onConnect(item.id);
     setConnectionModal(!connectionModal);
   }
-
-  // const state = useSelector(selectOrderState)
-  // const { commonLoad } = useLoadHook();
-  // const onSubmitFrom = () => {
-  //   commonLoad({
-  //     from_region_id: state.fromRegionId,
-  //     from_district_id: state.fromDistrictId,
-  //     from_address: state.fromAddress,
-  //     to_region_id: state.toRegionId,
-  //     to_district_id: state.toDistrictId,
-  //     to_address: state.toAddress,
-  //     cost: parseInt(state.cost!),
-  //     weight: state.weight,
-  //     matter: state.matter,
-  //   })
-  // }
 
   return (
     <>
@@ -71,7 +64,16 @@ const LoadItem = ({ item, editable }: ILoadProp) => {
             justifyContent: 'space-between',
           }}>
           <View style={{ flexDirection: 'row' }}>
-            <Text style={{ fontWeight: 'bold', fontSize: 18 }}>{item.cost}</Text>
+            <TextInputMask type={"money"}
+              options={{
+                precision: 0,
+                separator: ',',
+                delimiter: ' ',
+                unit: '',
+                suffixUnit: ''
+              }}
+              value={item.cost.toString()} style={styles.costStyle} editable={false}
+            />
             <Text
               style={{
                 marginLeft: 5,
@@ -201,7 +203,6 @@ const LoadItem = ({ item, editable }: ILoadProp) => {
                   }}>
                   {!!item.creator_name ? item.creator_name : 'Anonim'}
                   {user.id == item.creator_id && ' (siz)'}
-                  {/* {user.id == item.creator_id ? "( siz)" : " (begona)"} */}
                 </Text>
                 <Text
                   style={{
@@ -553,4 +554,9 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase',
     color: '#FFCD30',
   },
+  costStyle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginLeft: -2,
+  }
 });

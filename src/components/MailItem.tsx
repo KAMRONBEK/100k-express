@@ -26,6 +26,7 @@ import { selectUser } from "../redux/slices/user/user";
 import LottieView from 'lottie-react-native';
 import { lotties } from "../lotties";
 import { TextInputMask } from "react-native-masked-text";
+import { useMailHook } from "../screens/Mail/hooks";
 
 
 interface IMailProp {
@@ -37,6 +38,7 @@ const MailItem = ({ item, editable }: IMailProp) => {
   let navigation = useNavigation();
   let user = useSelector(selectUser);
   let dispatch = useDispatch();
+  let { onConnect } = useMailHook()
 
   const [deleteModalVisibility, setDeleteModalVisibility] = useState(false);
   const toggleModal = () => {
@@ -50,32 +52,30 @@ const MailItem = ({ item, editable }: IMailProp) => {
   };
 
   //client accept modal
+  const isCourier = useSelector(selectUser).is_deliveryman
+  const [acceptIsCourier, setAcceptIsCourier] = useState(false);
   const [isModalVisibleAccept, setModalVisibleAccept] = useState(false);
   const toggleAcceptanceModal = () => {
     if (isCourier) {
       setAcceptIsCourier(!acceptIsCourier)
     } else {
-      setModalVisibleAccept(!isModalVisibleAccept);
+      setModalVisibleAccept(!toggleConnectionModal);
     }
   };
 
-  useEffect(() => {
-  }, [isModalVisibleAccept]);
-
   // IsCourier
-  const isCourier = useSelector(selectUser).is_deliveryman
 
-  //courier accept modal
-  const [acceptIsCourier, setAcceptIsCourier] = useState(false);
-  // const toggleAcceptIsCourier = () => {
+  const [connectionModal, setConnectionModal] = useState(false);
+  const toggleConnectionModal = () => {
+    onConnect(item.id);
+    setConnectionModal(!connectionModal);
+  }
 
-  // }
 
   return (
     <View style={styles.container}>
       <View style={styles.boxOrders}>
         <View style={styles.moneyView}>
-          {/* <Text >{item.cash_amount}</Text> */}
           <TextInputMask type={"money"}
             options={{
               precision: 0,

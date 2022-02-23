@@ -29,30 +29,89 @@ export let useMailHook = () => {
   const [loading, setLoading] = useState(false);
   let dispatch = useDispatch();
   let user = useSelector(selectUser);
-  let effect = async () => {
+
+  const loadMail = async () => {
+    setLoading(true)
     try {
-      let res = await requests.mail.getMail();
+      let res = await requests.mail.user.getMail();
       dispatch(setMail(res.data.data));
-
-      let resCommon = await requests.mail.getCommonMail();
-      dispatch(setCommonMail(resCommon.data.data));
-
-      let resReceiveMail = await requests.mail.getReceiveMail();
-      dispatch(setReceiveMail(resReceiveMail.data.data));
-
-      let resPackageListMail = await requests.mail.getPackageListMail();
-      dispatch(setPackageListMail(resPackageListMail.data.data));
-    } catch (err: any) {
-      console.log(err.response.data, "error in mail");
     }
-  };
+    catch (err: any) {
+      showMessage({ message: JSON.stringify(err.response.data) + "\n error in mail", type: 'danger' })
+    }
+    finally {
+      setLoading(false)
+    }
+  }
 
-  let useRefresh = () => {
-    effect();
+  const loadCommonMail = async () => {
+    setLoading(true)
+    try {
+      let res = await requests.mail.common.getCommonMail();
+      dispatch(setCommonMail(res.data.data));
+    }
+    catch (err: any) {
+      showMessage({ message: JSON.stringify(err.response.data) + "\n error in mail common", type: 'danger' })
+    }
+    finally {
+      setLoading(false)
+    }
+  }
+
+  const loadReceiveMail = async () => {
+    setLoading(true)
+    try {
+      let res = await requests.mail.recipient.getReceiveMail()
+      dispatch(setReceiveMail(res.data.data));
+    }
+    catch (err: any) {
+      showMessage({ message: JSON.stringify(err.response.data) + "\n error in mail receive", type: 'danger' })
+    }
+    finally {
+      setLoading(false)
+    }
+  }
+
+  const loadPackageListMail = async () => {
+    setLoading(true)
+    try {
+      let res = await requests.mail.user.getPackageListMail()
+      dispatch(setPackageListMail(res.data.data));
+    }
+    catch (err: any) {
+      showMessage({ message: JSON.stringify(err.response.data) + "\n error in mail packageList", type: 'danger' })
+    }
+    finally {
+      setLoading(false)
+    }
+  }
+
+  let effect = () => {
+    loadMail()
+    loadCommonMail()
+    loadReceiveMail()
+    loadPackageListMail()
   };
+  let useMailRefresh = () => {
+    loadMail()
+  };
+  let useCommonMailRefresh = () => {
+    loadCommonMail()
+  };
+  let useReceiveMailRefresh = () => {
+    loadReceiveMail()
+  }
+  let usePackageListMailRefresh = () => [
+    loadPackageListMail()
+  ]
+
   useEffect(() => {
     effect();
   }, []);
+
+  const onConnect = async (id) => {
+    let res = await requests.mail.driver.buyContact(id);
+  }
 
   const filterMail = (status) => {
     setFilteredMail(
@@ -67,7 +126,7 @@ export let useMailHook = () => {
   const createMail = async (credentials) => {
     setLoading(true);
     try {
-      let res = await requests.mail.createMail(credentials);
+      let res = await requests.mail.user.createMail(credentials);
       showMessage({
         message: "Zakaz qabul qilindi",
         type: "success",
@@ -91,7 +150,7 @@ export let useMailHook = () => {
   const editMail = async (credentials, id) => {
     setLoading(true);
     try {
-      let res = await requests.mail.createMail(credentials, id);
+      let res = await requests.mail.user.editMail(credentials, id);
       showMessage({
         message: "Zakaz qabul qilindi",
         type: "success",
@@ -124,10 +183,14 @@ export let useMailHook = () => {
     commonMail,
     receiveMail,
     packageListMail,
-    useRefresh,
     createMail,
     loading,
     editMail,
-    onScanPress
+    onScanPress,
+    useMailRefresh,
+    useCommonMailRefresh,
+    useReceiveMailRefresh,
+    usePackageListMailRefresh,
+    onConnect
   };
 };

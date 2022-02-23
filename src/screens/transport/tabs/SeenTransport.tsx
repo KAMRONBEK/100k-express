@@ -1,7 +1,7 @@
-import React, { useState } from "react";
-import { FlatList, RefreshControl, ScrollView } from "react-native";
-import TransportItem from "../../../components/TransportItem";
-import { useTransportHook } from "../hooks";
+import React, { useState } from 'react';
+import { FlatList, RefreshControl, ScrollView, View } from 'react-native';
+import TransportItem from '../../../components/TransportItem';
+import { useTransportHook } from '../hooks';
 
 export const SeenTransport = () => {
     let [activeIndex, setActiveIndex] = useState(0);
@@ -11,20 +11,15 @@ export const SeenTransport = () => {
         useSeenTransportRefresh();
     }, []);
     return (
-        <ScrollView
-            style={{ flex: 1 }}
-            refreshControl={
-                <RefreshControl refreshing={loading} onRefresh={onRefresh} />
-            }
-        >
+        <View style={{ flex: 1 }}>
             <FlatList
-                contentContainerStyle={{
-                    flex: 1,
-                }}
-                keyExtractor={(item) => item.id.toString()}
+                refreshControl={
+                    <RefreshControl refreshing={loading} onRefresh={onRefresh} />
+                }
+                keyExtractor={item => item.id.toString()}
                 data={!!seenTransport ? seenTransport : []}
                 renderItem={({ item }) => <TransportItem item={item} />}
             />
-        </ScrollView>
+        </View>
     );
 };

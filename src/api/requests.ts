@@ -72,13 +72,24 @@ export let requests = {
     updateUser: credentials => axios.post(`${url}/user/update`, credentials),
   },
   mail: {
-    getMail: () => axios.get(`${url}/user/packages`),
-    createMail: credentials => axios.post(`${url}/user/packages`, credentials),
-    editMail: (credentials, id) =>
-      axios.post(`${url}/user/packeges/${id}`, credentials),
-    getCommonMail: () => axios.get(`${url}/packages`),
-    getReceiveMail: () => axios.get(`${url}/recipient/packages`),
-    getPackageListMail: () => axios.get(`${url}/user/package-list`),
+    common: {
+      getCommonMail: () => axios.get(`${url}/packages`),
+    },
+    user: {
+      getMail: () => axios.get(`${url}/user/packages`),
+      getPackageListMail: () => axios.get(`${url}/user/package-list`),
+      editMail: (credentials, id) =>
+        axios.post(`${url}/user/packeges/${id}`, credentials),
+      createMail: credentials =>
+        axios.post(`${url}/user/packages`, credentials),
+    },
+    driver: {
+      getMail: () => axios.get(`${url}/driver/packages`),
+      buyContact: id => axios.post(`${url}/driver/package/${id}/buy`),
+    },
+    recipient: {
+      getReceiveMail: () => axios.get(`${url}/recipient/packages`),
+    },
   },
   transport: {
     common: {
@@ -98,24 +109,38 @@ export let requests = {
         axios.post(`${url}/driver/transport/${id}`, credentials),
       getCommonTransport: () => axios.get(`${url}/transports`),
     },
-
     getTransportBuyContact: id => axios.post(`${url}/user/transport/${id}/buy`),
   },
   taxi: {
-    getTaxi: () => axios.get(`${url}/user/caborders`),
-    createPassanger: credentials =>
-      axios.post(`${url}/user/caborders`, credentials),
-    editPassanger: (credentials, id) =>
-      axios.post(`${url}/user/caborders/${id}`, credentials),
-    getCommonTaxi: () => axios.get(`${url}/caborders`),
+    common: {
+      getCommonTaxi: () => axios.get(`${url}/caborders`),
+    },
+    user: {
+      getTaxi: () => axios.get(`${url}/user/caborders`),
+      createPassanger: credentials =>
+        axios.post(`${url}/user/caborders`, credentials),
+      editPassanger: (credentials, id) =>
+        axios.post(`${url}/user/caborders/${id}`, credentials),
+    },
+    driver: {
+      getSeenTaxi: () => axios.get(`${url}/driver/caborders`),
+      buyContact: id => axios.post(`${url}/driver/caborder/${id}/buy`),
+    },
   },
   load: {
-    getLoad: () => axios.get(`${url}/user/cargo`),
-    createLoad: credentials => axios.post(`${url}/user/cargo`, credentials),
-    editLoad: (credentials, id) =>
-      axios.post(`${url}/user/cargo/${id}`, credentials),
-    getCommonLoad: () => axios.get(`${url}/cargo`),
-    getLoadBuyContact: () => axios.get(`${url}/driver/cargo`),
+    common: {
+      getCommonLoad: () => axios.get(`${url}/cargo`),
+    },
+    user: {
+      getLoad: (status = '') => axios.get(`${url}/user/cargo`),
+      createLoad: credentials => axios.post(`${url}/user/cargo`, credentials),
+      editLoad: (credentials, id) =>
+        axios.post(`${url}/user/cargo/${id}`, credentials),
+    },
+    driver: {
+      getLoad: (status = '') => axios.get(`${url}/driver/cargo`),
+    },
+    getSeenLoad: id => axios.post(`${url}/driver/cargo/${id}/buy`),
   },
   help: {
     getRegions: () => axios.get(`${url}/locations`),
