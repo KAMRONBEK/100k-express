@@ -7,6 +7,8 @@ import {
   Text,
   TouchableOpacity,
   View,
+  KeyboardAvoidingView,
+  ScrollView
 } from "react-native";
 import { TextInputMask } from "react-native-masked-text";
 import { images } from "../../../assets";
@@ -19,6 +21,7 @@ const Login = () => {
     useRequestPasswordHook();
   let navigation = useNavigation();
   return (
+    // <KeyboardAvoidingView behavior="position" shouldRasterizeIOS>
     <View style={styles.container}>
       <View>
         <Image source={images.bee} />
@@ -66,6 +69,7 @@ const Login = () => {
         </TouchableOpacity>
       </View>
     </View>
+    // </KeyboardAvoidingView>
   );
 };
 

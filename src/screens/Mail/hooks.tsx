@@ -1,4 +1,11 @@
+import { useNavigation } from "@react-navigation/core";
+import { useEffect, useState } from "react";
+import { showMessage } from "react-native-flash-message";
 import { useDispatch, useSelector } from "react-redux";
+import reactotron from "reactotron-react-native";
+import { throttle } from "underscore";
+import { requests } from "../../api/requests";
+import { routes } from "../../navigation/routes";
 import {
   IMail,
   selectCommonMail,
@@ -8,16 +15,9 @@ import {
   setCommonMail,
   setMail,
   setPackageListMail,
-  setReceiveMail,
-  update,
+  setReceiveMail
 } from "../../redux/slices/mail/mail";
-import { useEffect, useState } from "react";
-import { requests } from "../../api/requests";
-import { useNavigation } from "@react-navigation/core";
-import { showMessage } from "react-native-flash-message";
-import reactotron from "reactotron-react-native";
 import { selectUser } from "../../redux/slices/user/user";
-import { routes } from "../../navigation/routes";
 
 export let useMailHook = () => {
   let mail = useSelector(selectMail);
@@ -30,7 +30,7 @@ export let useMailHook = () => {
   let dispatch = useDispatch();
   let user = useSelector(selectUser);
 
-  const loadMail = async () => {
+  const loadMail = throttle(async () => {
     setLoading(true)
     try {
       let res = await requests.mail.user.getMail();
@@ -42,9 +42,9 @@ export let useMailHook = () => {
     finally {
       setLoading(false)
     }
-  }
+  }, 1000)
 
-  const loadCommonMail = async () => {
+  const loadCommonMail = throttle(async () => {
     setLoading(true)
     try {
       let res = await requests.mail.common.getCommonMail();
@@ -56,9 +56,9 @@ export let useMailHook = () => {
     finally {
       setLoading(false)
     }
-  }
+  }, 1000)
 
-  const loadReceiveMail = async () => {
+  const loadReceiveMail = throttle(async () => {
     setLoading(true)
     try {
       let res = await requests.mail.recipient.getReceiveMail()
@@ -70,9 +70,9 @@ export let useMailHook = () => {
     finally {
       setLoading(false)
     }
-  }
+  }, 1000)
 
-  const loadPackageListMail = async () => {
+  const loadPackageListMail = throttle(async () => {
     setLoading(true)
     try {
       let res = await requests.mail.user.getPackageListMail()
@@ -84,7 +84,7 @@ export let useMailHook = () => {
     finally {
       setLoading(false)
     }
-  }
+  }, 1000)
 
   let effect = () => {
     loadMail()

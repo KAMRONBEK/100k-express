@@ -28,23 +28,23 @@ const TransportTypeSelect = ({ value, setValue, title }) => {
     setMassVisible(state[1].selected);
   }, [state[1].selected]);
 
-  useEffect(() => {
-    setState(
-      state.map((item) => {
-        if (item.title == value) {
-          return {
-            ...item,
-            selected: true,
-          };
-        } else {
-          return {
-            ...item,
-            selected: false,
-          };
-        }
-      })
-    );
-  }, [value]);
+  // useEffect(() => {
+  //   setState(
+  //     state.map((item) => {
+  //       if (item.title == value) {
+  //         return {
+  //           ...item,
+  //           selected: true,
+  //         };
+  //       } else {
+  //         return {
+  //           ...item,
+  //           selected: false,
+  //         };
+  //       }
+  //     })
+  //   );
+  // }, [value]);
 
   const onCarPress = (id, value) => {
     setState((prev) => {

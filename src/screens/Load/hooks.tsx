@@ -91,7 +91,6 @@ export let useLoadHook = () => {
   }
 
   useEffect(() => {
-
     effect();
   }, []);
 

@@ -1,6 +1,6 @@
-import { useNavigation } from "@react-navigation/core";
+import {useNavigation} from '@react-navigation/core';
 import LottieView from 'lottie-react-native';
-import React, { useEffect, useState } from "react";
+import React, {useEffect, useState} from 'react';
 import {
   FlatList,
   RefreshControl,
@@ -11,30 +11,30 @@ import {
   Text,
   TouchableOpacity,
   useWindowDimensions,
-  View
-} from "react-native";
-import { SceneMap, TabBar, TabView } from "react-native-tab-view";
-import { useDispatch, useSelector } from "react-redux";
+  View,
+} from 'react-native';
+import {SceneMap, TabBar, TabView} from 'react-native-tab-view';
+import {useDispatch, useSelector} from 'react-redux';
 import {
   FilterIcon,
   GlobeIcon,
   PlusIcon,
-  QuestionsIcon
-} from "../../assets/icons/icons";
-import Filter from "../../components/Filter";
-import FilterModal from "../../components/FilterModal";
-import MailItem from "../../components/MailItem";
-import { colors } from "../../constants/color";
-import { lotties } from '../../lotties';
-import { routes as Routes } from "../../navigation/routes";
-import { selectOrderState } from "../../redux/slices/order/order";
-import { selectUser } from "../../redux/slices/user/user";
-import { useMailHook } from "./hooks";
+  QuestionsIcon,
+} from '../../assets/icons/icons';
+import Filter from '../../components/Filter';
+import FilterModal from '../../components/FilterModal';
+import MailItem from '../../components/MailItem';
+import {colors} from '../../constants/color';
+import {lotties} from '../../lotties';
+import {routes as Routes} from '../../navigation/routes';
+import {selectOrderState} from '../../redux/slices/order/order';
+import {selectUser} from '../../redux/slices/user/user';
+import {useMailHook} from './hooks';
 
 // FirstRoute
 
 const FirstRoute = () => {
-  const { commonMail, useCommonMailRefresh, loading } = useMailHook();
+  const {commonMail, useCommonMailRefresh, loading} = useMailHook();
   const onRefresh = React.useCallback(() => {
     useCommonMailRefresh();
   }, []);
@@ -50,61 +50,59 @@ const FirstRoute = () => {
   };
 
   return (
-    <View
-      style={{ marginBottom: 80 }}
-    >
+    <View style={{marginBottom: 80, flex: 1}}>
       <FlatList
-        contentContainerStyle={{
-          flex: 1
-        }}
         refreshControl={
           <RefreshControl refreshing={loading} onRefresh={onRefresh} />
         }
         ListHeaderComponent={<Filter route={Routes.MAIL} />}
         data={!!commonMail ? commonMail : []}
-        renderItem={({ item }) => <MailItem item={item} />}
+        renderItem={({item}) => <MailItem item={item} />}
       />
     </View>
   );
 };
 
 const SecondRoute = () => {
-  const isCourier = useSelector(selectUser).is_deliveryman
-  const [mailStatus, setMailStatus] = useState(!isCourier ? [
-    { id: 0, title: 'Yangi', value: 'new' },
-    { id: 1, title: 'Kurier topildi', value: 'accepted' },
-    { id: 2, title: "Yo'lda", value: 'active' },
-    { id: 4, title: 'Bekor qilingan', value: 'canceled' },
-    { id: 3, title: 'Bajarilgan', value: 'completed' },
-  ] : [
-    { id: 0, title: 'Yangi', value: 'new' },
-    { id: 1, title: "Yo'lda", value: 'active' },
-    { id: 2, title: "Yetkazilgan", value: 'active' },
-    { id: 4, title: 'Bekor qilingan', value: 'canceled' },
-  ]);
+  const isCourier = useSelector(selectUser).is_deliveryman;
+  const [mailStatus, setMailStatus] = useState(
+    !isCourier
+      ? [
+          {id: 0, title: 'Yangi', value: 'new'},
+          {id: 1, title: 'Kurier topildi', value: 'accepted'},
+          {id: 2, title: "Yo'lda", value: 'active'},
+          {id: 4, title: 'Bekor qilingan', value: 'canceled'},
+          {id: 3, title: 'Bajarilgan', value: 'completed'},
+        ]
+      : [
+          {id: 0, title: 'Yangi', value: 'new'},
+          {id: 1, title: "Yo'lda", value: 'active'},
+          {id: 2, title: 'Yetkazilgan', value: 'active'},
+          {id: 4, title: 'Bekor qilingan', value: 'canceled'},
+        ],
+  );
   let [activeIndex, setActiveIndex] = useState(0);
-  const { filteredMail, useMailRefresh, filterMail, loading } = useMailHook();
+  const {filteredMail, useMailRefresh, filterMail, loading} = useMailHook();
   let navigation = useNavigation();
   const onRefresh = React.useCallback(() => {
     useMailRefresh();
   }, []);
 
-  const onPressFilter = (id) => {
+  const onPressFilter = id => {
     setActiveIndex(id);
     filterMail(mailStatus[id].title);
   };
 
   return (
-    <View style={{ flex: 1, backgroundColor: colors.lightWhite }}>
+    <View style={{flex: 1, backgroundColor: colors.lightWhite}}>
       <View
         style={{
-          flexDirection: "row",
-          justifyContent: "space-between",
+          flexDirection: 'row',
+          justifyContent: 'space-between',
           marginHorizontal: 10,
           marginVertical: 10,
           paddingVertical: 2,
-        }}
-      >
+        }}>
         <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
           {mailStatus.map((e, i) => {
             return (
@@ -121,10 +119,9 @@ const SecondRoute = () => {
                       activeIndex === i ? colors.orange : colors.linghtGray,
                     paddingHorizontal: 10,
                     paddingVertical: 5,
-                    fontWeight: "600",
+                    fontWeight: '600',
                     marginLeft: 10,
-                  }}
-                >
+                  }}>
                   {e.title}
                 </Text>
               </TouchableOpacity>
@@ -137,37 +134,31 @@ const SecondRoute = () => {
           contentContainerStyle={styles.scrollView}
           refreshControl={
             <RefreshControl refreshing={loading} onRefresh={onRefresh} />
-          }
-        >
+          }>
           {!!filteredMail &&
-            filteredMail.map((item) => (
+            filteredMail.map(item => (
               <MailItem item={item} key={`${item.id} `} editable={true} />
             ))}
         </ScrollView>
       </View>
     </View>
   );
-}
+};
 
 // ThirdRoute
 
 const ThirdRoute = () => {
-  const { packageListMail, usePackageListMailRefresh, loading } = useMailHook();
+  const {packageListMail, usePackageListMailRefresh, loading} = useMailHook();
 
   const onRefresh = React.useCallback(() => {
     usePackageListMailRefresh();
   }, []);
 
   return (
-    <View
-      style={{ marginBottom: 80 }}
-    >
+    <View style={{marginBottom: 80, flex: 1}}>
       <FlatList
-        contentContainerStyle={{
-          flex: 1
-        }}
         data={!!packageListMail ? packageListMail : []}
-        renderItem={({ item }) => <MailItem item={item} />}
+        renderItem={({item}) => <MailItem item={item} />}
         refreshControl={
           <RefreshControl refreshing={loading} onRefresh={onRefresh} />
         }
@@ -180,25 +171,20 @@ const ThirdRoute = () => {
 
 const FourthRoute = () => {
   let navigation = useNavigation();
-  const { receiveMail, useReceiveMailRefresh, loading } = useMailHook();
+  const {receiveMail, useReceiveMailRefresh, loading} = useMailHook();
 
   const onRefresh = React.useCallback(() => {
     useReceiveMailRefresh();
   }, []);
 
   return (
-    <View
-      style={{ marginBottom: 80 }}
-    >
+    <View style={{marginBottom: 80, flex: 1}}>
       <FlatList
-        contentContainerStyle={{
-          flex: 1
-        }}
         refreshControl={
           <RefreshControl refreshing={loading} onRefresh={onRefresh} />
         }
         data={!!receiveMail ? receiveMail : []}
-        renderItem={({ item }) => <MailItem item={item} />}
+        renderItem={({item}) => <MailItem item={item} />}
       />
     </View>
   );
@@ -213,54 +199,50 @@ const renderScene = SceneMap({
   fourth: FourthRoute,
 });
 
-export interface MailViewProps { }
+export interface MailViewProps {}
 
 let titleIconMapper = {
   first: <GlobeIcon />,
 };
 
-const Mail = ({ }: MailViewProps) => {
+const Mail = ({}: MailViewProps) => {
   const layout = useWindowDimensions();
   let navigation = useNavigation();
   const [index, setIndex] = useState(0);
-  const isCourier = useSelector(selectUser).is_deliveryman
+  const isCourier = useSelector(selectUser).is_deliveryman;
   const [routes, setRoutes] = useState([
-    { key: "first", title: "Barchasi" },
-    { key: "second", title: !isCourier ? "Mening jo'natmalarim" : "Mening pochtalarim" },
-    { key: "third", title: "Ro'yxat" },
-    { key: "fourth", title: "Kirim" },
+    {key: 'first', title: 'Barchasi'},
+    {
+      key: 'second',
+      title: !isCourier ? "Mening jo'natmalarim" : 'Mening pochtalarim',
+    },
+    {key: 'third', title: "Ro'yxat"},
+    {key: 'fourth', title: 'Kirim'},
   ]);
 
   useEffect(() => {
     setRoutes([
-      { key: "first", title: "Barchasi" },
-      { key: "second", title: !isCourier ? "Mening jo'natmalarim" : "Mening pochtalarim" },
-      { key: "third", title: "Ro'yxat" },
-      { key: "fourth", title: "Kirim" },
-    ])
-
-  }, [isCourier])
-
-
-
+      {key: 'first', title: 'Barchasi'},
+      {
+        key: 'second',
+        title: !isCourier ? "Mening jo'natmalarim" : 'Mening pochtalarim',
+      },
+      {key: 'third', title: "Ro'yxat"},
+      {key: 'fourth', title: 'Kirim'},
+    ]);
+  }, [isCourier]);
 
   const [isModalVisible, setModalVisible] = useState(false);
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
   };
-
   const state = useSelector(selectOrderState);
-
-
   const dispatch = useDispatch();
-
-  const { createMail, loading, onScanPress } = useMailHook();
-
+  const {createMail, loading, onScanPress} = useMailHook();
   const [filterModalVisible, setFilterModalVisible] = useState(false);
   const filterToggleModal = () => {
     setFilterModalVisible(!filterModalVisible);
   };
-
   const onSubmitFrom = () => {
     createMail({
       from_address: state.fromAddress,
@@ -278,17 +260,16 @@ const Mail = ({ }: MailViewProps) => {
       creator_name: state.creatorName,
       insurance_amount: state.insurance,
       matter: state.matter,
-      vehicle_type: "on_car",
+      vehicle_type: 'on_car',
     });
   };
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: colors.lightWhite }}>
+    <SafeAreaView style={{flex: 1, backgroundColor: colors.lightWhite}}>
       <StatusBar backgroundColor={colors.lightOrange} />
       <View style={styles.top}>
         <TouchableOpacity
-          onPress={() => navigation.navigate(Routes.QUESTIONMAIL)}
-        >
+          onPress={() => navigation.navigate(Routes.QUESTIONMAIL)}>
           <QuestionsIcon size={22} />
         </TouchableOpacity>
         <View>
@@ -306,11 +287,11 @@ const Mail = ({ }: MailViewProps) => {
         </View>
       </View>
       <TabView
-        navigationState={{ index, routes }}
+        navigationState={{index, routes}}
         renderScene={renderScene}
         onIndexChange={setIndex}
-        initialLayout={{ width: layout.width }}
-        renderTabBar={(props) => (
+        initialLayout={{width: layout.width}}
+        renderTabBar={props => (
           <TabBar
             scrollEnabled={true}
             indicatorStyle={{
@@ -321,13 +302,13 @@ const Mail = ({ }: MailViewProps) => {
               marginLeft: -6,
             }}
             tabStyle={{
-              width: "auto",
+              width: 'auto',
               paddingBottom: 2,
               marginRight: 10,
             }}
             activeColor={colors.navyBlue}
             inactiveColor={colors.darkGray}
-            renderLabel={(e) => {
+            renderLabel={e => {
               return (
                 <View style={styles.tabView}>
                   {titleIconMapper[e.route.key] && (
@@ -339,11 +320,10 @@ const Mail = ({ }: MailViewProps) => {
                   <Text
                     numberOfLines={1}
                     style={{
-                      fontWeight: "bold",
+                      fontWeight: 'bold',
                       fontSize: 13,
                       color: e.focused ? colors.navyBlue : colors.darkGray,
-                    }}
-                  >
+                    }}>
                     {e.route.title}
                   </Text>
                 </View>
@@ -357,24 +337,27 @@ const Mail = ({ }: MailViewProps) => {
           />
         )}
       />
-      {!isCourier ? (<TouchableOpacity
-        onPress={() => navigation.navigate(Routes.ADD_MAIL)}
-        style={styles.touchOpacity}
-      >
-        <PlusIcon size={35} />
-      </TouchableOpacity>) : (
+      {!isCourier ? (
+        <TouchableOpacity
+          onPress={() => navigation.navigate(Routes.ADD_MAIL)}
+          style={styles.touchOpacity}>
+          <PlusIcon size={35} />
+        </TouchableOpacity>
+      ) : (
         <View>
           <TouchableOpacity
-            onPress={onScanPress}
+            onPress={() => navigation.navigate(Routes.CAMERA)}
             style={styles.touchOpacity}
-            activeOpacity={0.6}
-          >
-            <LottieView source={lotties.scan} autoPlay style={{ height: 45, width: 45 }} />
+            activeOpacity={0.6}>
+            <LottieView
+              source={lotties.scan}
+              autoPlay
+              style={{height: 45, width: 45}}
+            />
           </TouchableOpacity>
         </View>
-      )
-      }
-    </SafeAreaView >
+      )}
+    </SafeAreaView>
   );
 };
 const styles = StyleSheet.create({
@@ -387,8 +370,8 @@ const styles = StyleSheet.create({
   },
   btn: {
     backgroundColor: colors.white,
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     paddingVertical: 10,
     paddingHorizontal: 25,
     borderWidth: 1,
@@ -396,34 +379,34 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   tabView: {
-    flexDirection: "row",
+    flexDirection: 'row',
     color: colors.darkGray,
-    alignItems: "center",
+    alignItems: 'center',
   },
   tabimg: {
     width: 20,
     height: 20,
   },
   top: {
-    flexDirection: "row",
+    flexDirection: 'row',
     paddingHorizontal: 21,
     paddingVertical: 16,
     backgroundColor: colors.white,
-    justifyContent: "space-between",
-    alignItems: "center",
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
   touchOpacity: {
     borderColor: colors.darkOrange,
-    position: "absolute",
+    position: 'absolute',
     right: 26,
     bottom: 97,
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: 'center',
+    justifyContent: 'center',
     width: 55,
     height: 55,
     borderRadius: 65,
     backgroundColor: colors.lightOrange,
-    shadowColor: "#000",
+    shadowColor: '#000',
     shadowOffset: {
       width: 0,
       height: 2,
@@ -435,7 +418,7 @@ const styles = StyleSheet.create({
   mailText: {
     fontSize: 18,
     color: colors.black,
-    fontWeight: "bold",
+    fontWeight: 'bold',
   },
 });
 export default Mail;

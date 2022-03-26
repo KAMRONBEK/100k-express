@@ -1,25 +1,26 @@
-import React, { useState } from "react";
+import React, {useState} from 'react';
 import {
   StatusBar,
   StyleSheet,
   Text,
   TouchableOpacity,
   useWindowDimensions,
-  View
-} from "react-native";
-import { SceneMap, TabBar, TabView } from "react-native-tab-view";
-import { useDispatch, useSelector } from "react-redux";
+  View,
+} from 'react-native';
+import {SceneMap, TabBar, TabView} from 'react-native-tab-view';
+import {useDispatch, useSelector} from 'react-redux';
 import {
   FilterIcon,
-  GlobeIcon, PlusIcon,
-  QuestionsIcon
-} from "../../assets/icons/icons";
-import FilterModal from "../../components/FilterModal";
-import { colors } from "../../constants/color";
-import { routes as Routes } from "../../navigation/routes";
-import { selectOrderState } from "../../redux/slices/order/order";
-import { useLoadHook } from "./hooks";
-import { CommonLoad, MyOrderLoad, SeenLoad } from "./tabs";
+  GlobeIcon,
+  PlusIcon,
+  QuestionsIcon,
+} from '../../assets/icons/icons';
+import FilterModal from '../../components/FilterModal';
+import {colors} from '../../constants/color';
+import {routes as Routes} from '../../navigation/routes';
+import {selectOrderState} from '../../redux/slices/order/order';
+import {useLoadHook} from './hooks';
+import {CommonLoad, MyOrderLoad, SeenLoad} from './tabs';
 
 const renderScene = SceneMap({
   first: CommonLoad,
@@ -27,20 +28,17 @@ const renderScene = SceneMap({
   third: MyOrderLoad,
 });
 
-
-export interface PassengerViewProps { }
-
 let titleIconMapper = {
   first: <GlobeIcon />,
 };
 
-const Load = ({ navigation }: PassengerViewProps) => {
+const Load = ({navigation}) => {
   const layout = useWindowDimensions();
   const [index, setIndex] = useState(0);
   const [routes] = useState([
-    { key: "first", title: "Barchasi" },
-    { key: "second", title: "Ko'rilganlar" },
-    { key: "third", title: "Mening e'lonlarim" },
+    {key: 'first', title: 'Barchasi'},
+    {key: 'second', title: "Ko'rilganlar"},
+    {key: 'third', title: "Mening e'lonlarim"},
   ]);
 
   const [isModalVisible, setModalVisible] = useState(false);
@@ -58,7 +56,7 @@ const Load = ({ navigation }: PassengerViewProps) => {
 
   const dispatch = useDispatch();
 
-  const { createLoad, loading } = useLoadHook();
+  const {createLoad, loading} = useLoadHook();
 
   const onSubmitFrom = () => {
     createLoad({
@@ -77,17 +75,16 @@ const Load = ({ navigation }: PassengerViewProps) => {
       creator_name: state.creatorName,
       insurance_amount: state.insurance,
       matter: state.matter,
-      vehicle_type: "on_car",
+      vehicle_type: 'on_car',
     });
   };
 
   return (
-    <View style={{ flex: 1, marginBottom: 65 }}>
+    <View style={{flex: 1, marginBottom: 65}}>
       <StatusBar style={styles.statusbar} />
       <View style={styles.top}>
         <TouchableOpacity
-          onPress={() => navigation.navigate(Routes.QUESTIONLOAD)}
-        >
+          onPress={() => navigation.navigate(Routes.QUESTIONLOAD)}>
           <QuestionsIcon size={22} />
         </TouchableOpacity>
         <View>
@@ -105,11 +102,11 @@ const Load = ({ navigation }: PassengerViewProps) => {
         </View>
       </View>
       <TabView
-        navigationState={{ index, routes }}
+        navigationState={{index, routes}}
         renderScene={renderScene}
         onIndexChange={setIndex}
-        initialLayout={{ width: layout.width }}
-        renderTabBar={(props) => (
+        initialLayout={{width: layout.width}}
+        renderTabBar={props => (
           <TabBar
             indicatorStyle={{
               backgroundColor: colors.navyBlue,
@@ -119,11 +116,12 @@ const Load = ({ navigation }: PassengerViewProps) => {
               marginLeft: -6,
             }}
             tabStyle={{
-              width: "auto",
+              width: 'auto',
               paddingBottom: 2,
               marginRight: 10,
+              flex: 1,
             }}
-            renderLabel={(e) => {
+            renderLabel={e => {
               return (
                 <View style={styles.tabView}>
                   {titleIconMapper[e.route.key] && (
@@ -135,10 +133,9 @@ const Load = ({ navigation }: PassengerViewProps) => {
                   <Text
                     style={{
                       fontSize: 13,
-                      fontWeight: "bold",
+                      fontWeight: 'bold',
                       color: e.focused ? colors.navyBlue : colors.darkGray,
-                    }}
-                  >
+                    }}>
                     {e.route.title}
                   </Text>
                 </View>
@@ -154,8 +151,7 @@ const Load = ({ navigation }: PassengerViewProps) => {
       />
       <TouchableOpacity
         onPress={() => navigation.navigate(Routes.ADD_LOAD)}
-        style={styles.touchopacity}
-      >
+        style={styles.touchopacity}>
         <PlusIcon size={35} />
       </TouchableOpacity>
     </View>
@@ -173,8 +169,8 @@ const styles = StyleSheet.create({
   },
   btn: {
     backgroundColor: colors.white,
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     paddingVertical: 10,
     paddingHorizontal: 25,
     borderWidth: 1,
@@ -182,20 +178,20 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   top: {
-    flexDirection: "row",
+    flexDirection: 'row',
     paddingHorizontal: 21,
     paddingVertical: 16,
-    justifyContent: "space-between",
-    alignItems: "center",
+    justifyContent: 'space-between',
+    alignItems: 'center',
     backgroundColor: colors.white,
   },
   header: {
     marginVertical: 15,
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     paddingVertical: 5,
     paddingHorizontal: 16,
-    justifyContent: "space-between",
+    justifyContent: 'space-between',
   },
   btn1: {
     borderWidth: 1,
@@ -204,11 +200,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 5,
     paddingVertical: 11,
     backgroundColor: colors.lightOrange,
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   statusBar: {
-    backgroundColor: "#FFCE34",
+    backgroundColor: '#FFCE34',
   },
   topImg: {
     width: 24,
@@ -216,7 +212,7 @@ const styles = StyleSheet.create({
   },
   topText: {
     fontSize: 20,
-    color: "#000",
+    color: '#000',
   },
   filtericon: {
     width: 20,
@@ -228,22 +224,22 @@ const styles = StyleSheet.create({
     marginRight: 5,
   },
   locationtext: {
-    color: "#8a8a8a",
+    color: '#8a8a8a',
     fontSize: 13,
     paddingHorizontal: 15,
   },
   touchopacity: {
     borderColor: colors.darkOrange,
-    position: "absolute",
+    position: 'absolute',
     right: 26,
     bottom: 35,
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: 'center',
+    justifyContent: 'center',
     width: 55,
     height: 55,
     borderRadius: 65,
     backgroundColor: colors.lightOrange,
-    shadowColor: "#000",
+    shadowColor: '#000',
     shadowOffset: {
       width: 0,
       height: 2,
@@ -258,7 +254,7 @@ const styles = StyleSheet.create({
     height: 26,
   },
   statusbar: {
-    backgroundColor: "#FFCE34",
+    backgroundColor: '#FFCE34',
   },
   stimage: {
     width: 24,
@@ -266,7 +262,7 @@ const styles = StyleSheet.create({
   },
   passengerBox: {
     fontSize: 18,
-    fontWeight: "bold",
+    fontWeight: 'bold',
     color: colors.black,
     marginLeft: 55,
   },
@@ -279,7 +275,7 @@ const styles = StyleSheet.create({
     width: 15,
     height: 15,
     marginRight: 5,
-    alignItems: "center",
+    alignItems: 'center',
   },
   btntext: {
     color: colors.darkGray,
@@ -291,10 +287,10 @@ const styles = StyleSheet.create({
     marginHorizontal: 6,
   },
   tabView: {
-    flexDirection: "row",
+    flexDirection: 'row',
     color: colors.darkGray,
-    fontWeight: "bold",
-    alignItems: "center",
+    fontWeight: 'bold',
+    alignItems: 'center',
   },
   tabimg: {
     width: 20,
@@ -310,13 +306,13 @@ const styles = StyleSheet.create({
   },
   goBackFilter: {
     backgroundColor: colors.white,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "flex-start",
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-start',
     paddingHorizontal: 20,
     paddingVertical: 20,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 1},
     shadowOpacity: 0.8,
     shadowRadius: 2,
     elevation: 5,
@@ -326,10 +322,10 @@ const styles = StyleSheet.create({
   filterText: {
     marginLeft: 130,
     fontSize: 18,
-    fontWeight: "bold",
+    fontWeight: 'bold',
   },
   searchInputView: {
-    flexDirection: "row",
+    flexDirection: 'row',
     borderWidth: 1,
     borderColor: colors.gray,
     // paddingHorizontal: 45,
@@ -349,8 +345,8 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     borderColor: colors.lightgray,
     borderWidth: 1,
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     marginHorizontal: 15,
     marginTop: 5,
   },
@@ -361,12 +357,12 @@ const styles = StyleSheet.create({
   },
   searchTouchBtn: {
     marginHorizontal: 25,
-    alignItems: "center",
+    alignItems: 'center',
     marginTop: 340,
     backgroundColor: colors.lightOrange,
     borderRadius: 10,
     paddingVertical: 10,
-    shadowColor: "#000",
+    shadowColor: '#000',
     shadowOffset: {
       width: 0,
       height: 2,
@@ -377,7 +373,7 @@ const styles = StyleSheet.create({
   },
   searchTouchText: {
     fontSize: 18,
-    fontWeight: "bold",
+    fontWeight: 'bold',
   },
   clearFilterText: {
     fontSize: 16,
@@ -385,12 +381,12 @@ const styles = StyleSheet.create({
     color: colors.lightOrange,
   },
   clearFilterView: {
-    alignItems: "center",
+    alignItems: 'center',
     marginTop: 10,
   },
   loadText: {
     fontSize: 18,
     color: colors.black,
-    fontWeight: "bold",
+    fontWeight: 'bold',
   },
 });

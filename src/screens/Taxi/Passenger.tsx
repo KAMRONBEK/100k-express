@@ -24,9 +24,6 @@ import { selectUser } from "../../redux/slices/user/user";
 import { useTaxiHook } from "./hooks";
 import { CommonTaxi, SeenTaxi, MyTaxiOrder } from "./tabs";
 
-
-export interface PassengerViewProps { }
-
 let titleIconMapper = {
   first: <GlobeIcon />,
 };
@@ -58,11 +55,8 @@ const Passenger = () => {
   };
 
   const state = useSelector(selectOrderState);
-
   const dispatch = useDispatch();
-
   const { createPassanger, loading } = useTaxiHook();
-
   const onSubmitFrom = () => {
     createPassanger({
       from_address: state.fromAddress,

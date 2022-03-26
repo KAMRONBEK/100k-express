@@ -12,6 +12,7 @@ import BouncyCheckbox from "react-native-bouncy-checkbox";
 import * as ImagePicker from "react-native-image-picker";
 import { TextInputMask } from "react-native-masked-text";
 import { ActivityIndicator } from "react-native-paper";
+import { Item } from "react-native-paper/lib/typescript/components/List/List";
 import RNPickerSelect from "react-native-picker-select";
 import { useDispatch, useSelector } from "react-redux";
 import { requests } from "../../api/requests";
@@ -94,11 +95,11 @@ const AddTransport = ({ navigation, e }) => {
         <Text style={styles.addTransportText}>Transport qo’shish</Text>
       </View>
       <ScrollView>
-        {/* <TransportTypeSelector
+        <TransportTypeSelector
           value={state.transportType}
           setValue={(e) => dispatch(setOrderData({ transportType: e }))}
-          title={e.title}
-        /> */}
+        // title={e.title}
+        />
         <View style={{ paddingHorizontal: 16, marginTop: 20, }}>
           <Text style={{ fontSize: 14, color: colors.darkGray }}>
             Texnika to'g'risida ma'lumot *
@@ -210,21 +211,12 @@ const AddTransport = ({ navigation, e }) => {
             }}
           >
             <View style={[styles.inputView]}>
-              <TextInputMask
-                type={"money"}
-                options={{
-                  precision: 0,
-                  separator: ',',
-                  delimiter: ' ',
-                  unit: '',
-                  suffixUnit: ''
-                }}
+              <TextInput
                 style={{ fontSize: 16 }}
-                value={state.cost?.toString()}
+                value={state.cost}
                 onChangeText={(e) => dispatch(setOrderData({ cost: e }))}
                 placeholder="Narxni kiriting..."
                 keyboardType="numeric"
-
               />
             </View>
             <View

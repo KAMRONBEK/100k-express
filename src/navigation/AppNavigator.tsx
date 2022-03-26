@@ -3,38 +3,37 @@ import { createStackNavigator } from '@react-navigation/stack';
 import React from 'react';
 import 'react-native-gesture-handler';
 import { useSelector } from 'react-redux';
+import QuestionLoad from '../components/QuestionLoad';
+import QuestionMail from '../components/QuestionMail';
+import QuestionPassenger from '../components/QuestionPassanger';
+import QuestionTransport from '../components/QuestionTransport';
 import { selectToken } from '../redux/slices/user/user';
 import About from '../screens/About';
 import Login from '../screens/Auth/Login/Login';
+import Cabinet from '../screens/Cabinet';
 import GetMoney from '../screens/GetMoney';
 import History from '../screens/History';
+import Kuriyer from '../screens/Kuriyer/Kuriyer';
 import AddLoad from '../screens/Load/AddLoad';
 import EditLoad from '../screens/Load/EditLoad';
+import LoginProfile from '../screens/LogindPofile';
 import AddMail from '../screens/Mail/AddMail';
+import EditMail from '../screens/Mail/EditMail';
 import MyCabinet from '../screens/MyCabinet';
 import NoInternet from '../screens/NoInternet';
 import Notifications from '../screens/Notifications';
 import OnboardingScreen from '../screens/OnboardingScreen';
 import District from '../screens/Regions/District';
-import AddPassenger from '../screens/Taxi/AddPassenger';
-import { routes } from './routes';
 import Regions from '../screens/Regions/Regions';
-import EditPassenger from '../screens/Taxi/EditPassanger';
-import { navigationRef } from './NavigationService';
-import TabStack from './TabStack';
-import AddTransport from '../screens/transport/AddTransport';
 import SupportView from '../screens/Support/Support';
-import EditMail from '../screens/Mail/EditMail';
-import Kuriyer from '../screens/Kuriyer/Kuriyer';
-import QuestionMail from '../components/QuestionMail';
-import QuestionPassenger from '../components/QuestionPassanger';
-import QuestionLoad from '../components/QuestionLoad';
-import QuestionTransport from '../components/QuestionTransport';
-import LoginProfile from '../screens/LogindPofile';
-import Cabinet from '../screens/Cabinet';
-import Code from '../screens/Auth/Login/Code';
-import CameraModule from '../screens/Mail/Camera/Camera';
+import AddPassenger from '../screens/Taxi/AddPassenger';
+import EditPassenger from '../screens/Taxi/EditPassanger';
+import AddTransport from '../screens/transport/AddTransport';
 import EditTransport from '../screens/transport/EditTransport';
+import { navigationRef } from './NavigationService';
+import { routes } from './routes';
+import TabStack from './TabStack';
+import Camera from '../components/Camera/Camera';
 
 const Stack = createStackNavigator();
 
@@ -78,8 +77,9 @@ const AppNavigator = () => {
         />
         <Stack.Screen name={routes.LOGINPROFILE} component={LoginProfile} />
         <Stack.Screen name={routes.CABINET_STACK} component={Cabinet} />
-        <Stack.Screen name={routes.CAMERA} component={CameraModule} />
+        {/* <Stack.Screen name={routes.CAMERA} component={CameraModule} /> */}
         <Stack.Screen name={routes.EDIT_TRANSPORT} component={EditTransport} />
+        <Stack.Screen name={routes.CAMERA} component={Camera} />
       </Stack.Navigator>
     </NavigationContainer>
   );
